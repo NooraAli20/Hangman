@@ -36,10 +36,6 @@ h1 {
     transition: bottom 4s;
 }
 
-.keyboard--hidden {
-    bottom: -100%
-}
-
 .keyboard__keys{
     text-align: center;
 }
