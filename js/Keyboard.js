@@ -8,11 +8,6 @@ const Keyboard = {
         keys: []
     },
 
-    // the events on the created object
-    eventHandlers: {
-        onclose: null
-    },
-
     // the values of each clickable element in the keyboard object, i.e button
     properties: {
         value: ""
@@ -65,6 +60,14 @@ const Keyboard = {
             // we can get the inner text when it is clicked. 
             keyElement.addEventListener("click", () => {
                 console.log(keyElement.innerText);
+                var element = document.querySelectorAll('.square.lousy.' + keyElement.innerText);
+                if(typeof element[0] !== 'undefined')
+                {
+                    element[0].classList.remove('lousy');
+                    element[0].classList.add('visualizeKey');
+                    element[0].textContent = keyElement.innerText;
+                }
+               
             });
 
             // add the created button to the fragment
@@ -77,19 +80,5 @@ const Keyboard = {
         });
 
         return fragment;
-    },
-
-    open(initialValue, oninput, onclose) {
-        this.properties.value = initialValue || "";
-        this.eventHandlers.oninput = oninput;
-        this.eventHandlers.onclose = onclose;
-        this.elements.main.classList.remove("keyboard--hidden");
-    },
-
-    close() {
-        this.properties.value = "";
-        this.eventHandlers.oninput = oninput;
-        this.eventHandlers.onclose = onclose;
-        this.elements.main.classList.add("keyboard--hidden");
     }
 };
