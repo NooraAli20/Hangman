@@ -23,12 +23,12 @@ h1 {
 .container {
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: repeat(4, auto);
+    grid-template-rows: 90px auto 100px 50px;
     grid-column-gap: 0px;
-    grid-row-gap: 30px;
+    grid-row-gap: 15px;
     align-items: center;
     justify-content: center;
-    margin: 10 0 10 0;
+    margin: 0;
 }
 
  .placeHolderChoosen {
@@ -147,4 +147,15 @@ img {
 
 .keyboard__key--dark {
     background: rgba(0, 0, 0, 0.25);
+}
+
+.centralizeLabelAndScore {
+    display: flex;
+    font-weight: bolder;
+    align-content: center;
+    justify-content: center;
+}
+
+.scores{
+    color:red;
 }
