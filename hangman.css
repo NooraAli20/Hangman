@@ -1,15 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap');
 
+/*
 :root {
     --maxWidth:1440px;
     --minWidth:360px;
 
-}
+}*/
 body {
     /* background-color: #2d6a4f;*/
     font-family: 'Syne Mono', monospace;
     height:100%;
-    
+    width:auto;
+    margin: 0px;
 }
 
 h1 {
@@ -19,41 +21,59 @@ h1 {
 }
 
 .container {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 90px auto 100px 50px;
+    grid-column-gap: 0px;
+    grid-row-gap: 15px;
     align-items: center;
     justify-content: center;
-    margin-top: -3rem;
-    
+    margin: 0;
 }
+
+ .placeHolderChoosen {
+    display: flex;
+    margin-top:20px;
+    justify-content: center;
+  }
+
+.title {
+    justify-content: center;
+}
+
+.imagePlaceHolder {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    padding:10px;
+}
+
 img {
-    display: flex;
-    justify-items: center;
-    align-items: center;
-    position: relative;
-
-
-}
-/*
-.ResetGame {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translateX(675%);
-    margin-top: 7rem;
+    width:auto
 }
 
-
-.child {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   
-  .child-play {
-      align-items: center;
   }
-*/
-  .keyboard {
+
+.square {
+    height: 45px;
+    width: 45px;
+    color:white;
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    padding-bottom:5px;
+    align-items: center;
+    font-size: 22px;
+    font-weight: bolder;
+    margin:5px;
+    text-align: center;
+}
+
+.keyboard {
     position: fixed;
     left: 0;
     bottom: 0;
@@ -67,6 +87,10 @@ img {
 
 .keyboard__keys{
     text-align: center;
+}
+
+.visualizeKey {
+    color:black;
 }
 
 .keyboard__key{
@@ -123,4 +147,15 @@ img {
 
 .keyboard__key--dark {
     background: rgba(0, 0, 0, 0.25);
+}
+
+.centralizeLabelAndScore {
+    display: flex;
+    font-weight: bolder;
+    align-content: center;
+    justify-content: center;
+}
+
+.scores{
+    color:red;
 }

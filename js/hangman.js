@@ -1,12 +1,8 @@
 window.addEventListener("DOMContentLoaded", function () {
-   
-  Keyboard.init();
+   // Initialize the keyboard
+  ButtonsCanvas.init();
 
-    let arrayOfWords = randWords.words;
-
-    setInterval(function() {
-      //console.log(arrayOfWords[Math.floor(Math.random() * arrayOfWords.length)]);
-    }, 1000);
-
+  RandomWords.generateAndRenderSampleWord();
+    
 });
 
