@@ -62,7 +62,6 @@ img {
 .square {
     height: 45px;
     width: 45px;
-    color:white;
     border-bottom-color: black;
     border-bottom-style: solid;
     padding-bottom:5px;
@@ -71,6 +70,18 @@ img {
     font-weight: bolder;
     margin:5px;
     text-align: center;
+}
+
+.squareReveal {
+    animation:blinkingText 1.2s infinite;
+}
+
+@keyframes blinkingText{
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
 }
 
 .keyboard {
@@ -95,6 +106,8 @@ img {
 
 .keyboard__key{
     height: 45px;
+    font-family: 'Syne Mono', monospace;
+    font-weight: bolder;
     /* The reason why the width is in percentage is that it allows it to be responsive */
     width: 6%;
     max-width: 50px;
