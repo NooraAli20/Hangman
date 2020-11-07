@@ -5,7 +5,8 @@ const ButtonsCanvas = {
     elements: {
         main: null,
         buttonsContainer: null,
-        buttons: []
+        buttons: [],
+        buttonsDisabled: []
     },
 
     // This method is called to initialize the keyboard object and render all the keys to be displayed
@@ -71,42 +72,39 @@ const ButtonsCanvas = {
                         element.textContent = buttonElement.innerText;
                         buttonElement.style.color = 'red';
                         buttonElement.disabled = true;
+
+                        ButtonsCanvas.elements.buttonsDisabled.push(buttonElement);
                     });
                 }
-                else
+                
+                if(RandomWords.locals.imageOnDisplay < 5)
                 {
-                    // If we are on the finaly image, 5th image, 
-                    if(RandomWords.locals.imageOnDisplay == 5)
-                    {
-                        let wordHTML = document.querySelectorAll('.square.lousy');
-                        wordHTML.forEach(article => {
-                           article.textContent = article.classList[2];
-                           article.style.color = 'red';
-                           article.classList.add('squareReveal');
-                        });
-                    }
-                    else if(RandomWords.locals.imageOnDisplay < 5)
-                    {
-                        buttonElement.style.color = 'rgba(210, 136, 136, 0.5)';
-                        buttonElement.style.background = 'rgba(235, 234, 233, 0.9)';
-                        buttonElement.title = 'Letter disabled. Already used';
-                        buttonElement.disabled = true;
-                        RandomWords.updateImageOnFailedAttempt(RandomWords.locals.imageOnDisplay);
-                        RandomWords.locals.imageOnDisplay++;
-                    }
-                }
+                    buttonElement.style.color = 'rgba(210, 136, 136, 0.5)';
+                    buttonElement.style.background = 'rgba(235, 234, 233, 0.9)';
+                    buttonElement.title = 'Letter disabled. Already used';
+                    buttonElement.disabled = true;
+                    RandomWords.updateImageOnFailedAttempt(RandomWords.locals.imageOnDisplay);
+                    RandomWords.locals.imageOnDisplay++;
 
-                // Now check if there is any .square element with the lousy class attached to it. If not any, then the 
-                // user has finished the game. Ask if he wants to play again and generate the markup again
-                var notAnsweredElements = document.querySelectorAll('.square.lousy').length;
-                if(notAnsweredElements == 0)
+                    ButtonsCanvas.elements.buttonsDisabled.push(buttonElement);
+                }
+                else if(RandomWords.locals.imageOnDisplay == 5)
                 {
                     setTimeout(function() {
+
+                        ButtonsCanvas.revealWordToPlayer();
+
                         document.querySelector('.container').removeChild(document.querySelector('.placeHolderChoosen'));
                         RandomWords.generateAndRenderSampleWord();
                         document.querySelector('#suicideImage').setAttribute('src', ' ');
                     }, 1500);
-                
+                    
+                    // Enable all disabled keyboard keys 
+                    ButtonsCanvas.elements.buttonsDisabled.forEach(button => {
+                        button.disabled = false;
+                        button.style.color = 'black';
+                        button.style.background = 'rgba(255, 255, 255, 0.6)';
+                    })
                 }
             });
 
@@ -120,6 +118,17 @@ const ButtonsCanvas = {
         });
 
         return fragment;
+    },
+    revealWordToPlayer()
+    {
+        setTimeout(function() {
+            let wordHTML = document.querySelectorAll('.square.lousy');
+            wordHTML.forEach(article => {
+                article.textContent = article.classList[2];
+                article.style.color = 'red';
+                article.classList.add('squareReveal');
+            });
+        }, 1500);
     }
 };
 
