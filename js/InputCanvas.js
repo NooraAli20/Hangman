@@ -74,10 +74,18 @@ const ButtonsCanvas = {
                         buttonElement.disabled = true;
 
                         ButtonsCanvas.elements.buttonsDisabled.push(buttonElement);
+
+                        RandomWords.locals.score += RandomWords.locals.pointsPerCorrectLetterGuessed;
+
+                        RandomWords.locals.properlyGuessedCharacterPerWord++;
+
+                        RandomWords.updateWordsAndScore();
                     });
+
+                    ButtonsCanvas.playAudio('correct');
                 }
                 
-                if(RandomWords.locals.imageOnDisplay < 5)
+                if(RandomWords.locals.imageOnDisplay < 5 && typeof elements[0] === 'undefined')
                 {
                     buttonElement.style.color = 'rgba(210, 136, 136, 0.5)';
                     buttonElement.style.background = 'rgba(235, 234, 233, 0.9)';
@@ -87,24 +95,29 @@ const ButtonsCanvas = {
                     RandomWords.locals.imageOnDisplay++;
 
                     ButtonsCanvas.elements.buttonsDisabled.push(buttonElement);
+
+                    ButtonsCanvas.playAudio('wrong');
                 }
                 else if(RandomWords.locals.imageOnDisplay == 5)
                 {
-                    setTimeout(function() {
+                    // reveal the word for 1.5s
+                    let wordHTML = document.querySelectorAll('.square.lousy');
+                    wordHTML.forEach(article => {
+                        article.textContent = article.classList[2];
+                        article.classList.add('squareReveal');
+                    });
 
-                        ButtonsCanvas.revealWordToPlayer();
+                    this.playAudio('endgame');
 
-                        document.querySelector('.container').removeChild(document.querySelector('.placeHolderChoosen'));
-                        RandomWords.generateAndRenderSampleWord();
-                        document.querySelector('#suicideImage').setAttribute('src', ' ');
-                    }, 1500);
-                    
-                    // Enable all disabled keyboard keys 
-                    ButtonsCanvas.elements.buttonsDisabled.forEach(button => {
-                        button.disabled = false;
-                        button.style.color = 'black';
-                        button.style.background = 'rgba(255, 255, 255, 0.6)';
-                    })
+                    this.resetHTMLRandomWord(5000);
+                }
+                // When every letter is correctly guessed
+                else if(RandomWords.locals.charsInWord === RandomWords.locals.properlyGuessedCharacterPerWord)
+                {
+                    this.playAudio('cheers');
+                    RandomWords.locals.wordsPassed++;
+                    RandomWords.updateWordsAndScore();
+                    this.resetHTMLRandomWord(7000);
                 }
             });
 
@@ -119,16 +132,38 @@ const ButtonsCanvas = {
 
         return fragment;
     },
-    revealWordToPlayer()
+    playAudio(fileName)
+    {
+        let correctAudio = new Audio('../sounds/' + fileName +'.wav');
+        correctAudio.play();
+    },
+    resetHTMLRandomWord(duration)
     {
         setTimeout(function() {
-            let wordHTML = document.querySelectorAll('.square.lousy');
-            wordHTML.forEach(article => {
-                article.textContent = article.classList[2];
-                article.style.color = 'red';
-                article.classList.add('squareReveal');
+
+            // Reset the correctly guessed characters to zero
+            RandomWords.locals.properlyGuessedCharacterPerWord = 0;
+
+            // reset the image counter variable 
+            RandomWords.locals.imageOnDisplay = 1;
+
+            // then refresh the container for a new word
+            document.querySelector('.container > .sectionParagraph').removeChild(document.querySelector('p'));
+
+            // randomize the new word
+            RandomWords.generateAndRenderSampleWord();
+
+            // reset the image src button
+            document.querySelector('#suicideImage').setAttribute('src', ' ');
+
+            // Enable all disabled keyboard keys 
+            ButtonsCanvas.elements.buttonsDisabled.forEach(button => {
+                button.disabled = false;
+                button.style.color = 'black';
+                button.style.background = 'rgba(255, 255, 255, 0.6)';
             });
-        }, 1500);
+            
+        }, duration);
     }
 };
 
@@ -137,13 +172,14 @@ const RandomWords = {
     locals: {
         word: [],
         charsInWord: 0,
-        levelOfDifficulty: 2,
         imageBaseUrl: '../images/',
-        currentWeightAggregate: 0.0,
         imagesExt: '.png',
         imageOnDisplay: 1,
-        totalNumberOfAttemps: 0,
-        score: 0
+        numberOfWordsAttempted: 0,
+        score: 0.0,
+        pointsPerCorrectLetterGuessed: 0.5,
+        properlyGuessedCharacterPerWord: 0,
+        wordsPassed: 0
     },
 
     generateAndRenderSampleWord()
@@ -154,8 +190,10 @@ const RandomWords = {
 
         console.log(randomWordChoosen);
 
-        let choosenWordPlaceHolder = document.createElement("section");
-        choosenWordPlaceHolder.classList.add("placeHolderChoosen");
+        let choosenWordParagraph = document.createElement("p")
+        choosenWordParagraph.classList.add("placeHolderChoosen");
+
+        this.locals.numberOfWordsAttempted++;
 
         let splitRandomChosenWord = randomWordChoosen.trim().split('');
 
@@ -169,13 +207,28 @@ const RandomWords = {
             letter.style.color = 'black';
             letter.classList.add(character.toUpperCase());
             letter.textContent = " ";
-            choosenWordPlaceHolder.appendChild(letter);
+            choosenWordParagraph.appendChild(letter);
         });
-        
-        document.querySelector('.container').appendChild(choosenWordPlaceHolder);
+
+        document.querySelector('.container > .sectionParagraph').appendChild(choosenWordParagraph);
+
+        // Add the words and score section
+        let scoreBoard = document.createElement("section");
+        scoreBoard.classList.add("scoreBoard");
+        let paragraph = document.createElement("p");
+        scoreBoard.appendChild(paragraph);
+       
+        document.querySelector('.container').appendChild(scoreBoard);
+
+        this.updateWordsAndScore();
     },
     updateImageOnFailedAttempt(imageNumber)
     {
         document.querySelector('#suicideImage').setAttribute('src', this.locals.imageBaseUrl + imageNumber + this.locals.imagesExt);
+    },
+    updateWordsAndScore()
+    {
+        let scoreBoardParagraph = document.querySelector('.scoreBoard p')
+        scoreBoardParagraph.textContent = "#Words : " + this.locals.wordsPassed + "/" +  this.locals.numberOfWordsAttempted + " - Score : " + this.locals.score; 
     }
 }

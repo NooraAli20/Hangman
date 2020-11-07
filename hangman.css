@@ -31,6 +31,11 @@ h1 {
     margin: 0;
 }
 
+.scoreBoard p{
+    justify-content: center;
+    text-align: center;
+}
+
  .placeHolderChoosen {
     display: flex;
     margin-top:20px;
@@ -56,8 +61,8 @@ img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-  
-  }
+    border:0;
+}
 
 .square {
     height: 45px;
@@ -77,12 +82,14 @@ img {
 }
 
 @keyframes blinkingText{
-    0%{     color: #000;    }
-    49%{    color: #000; }
+    0%{     color: rgba(255, 0, 0, 0.8);    }
+    49%{    color: rgba(255, 0, 0, 0.5);    }
     60%{    color: transparent; }
     99%{    color:transparent;  }
-    100%{   color: #000;    }
+    100%{   color: rgba(255, 0, 0, 0.8); ;    }
 }
+
+img{ border:0; }
 
 .keyboard {
     position: fixed;
