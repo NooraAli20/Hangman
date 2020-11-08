@@ -100,16 +100,7 @@ const ButtonsCanvas = {
                 }
                 else if(RandomWords.locals.imageOnDisplay == 5)
                 {
-                    // reveal the word for 1.5s
-                    let wordHTML = document.querySelectorAll('.square.lousy');
-                    wordHTML.forEach(article => {
-                        article.textContent = article.classList[2];
-                        article.classList.add('squareReveal');
-                    });
-
-                    this.playAudio('endgame');
-
-                    this.resetHTMLRandomWord(5000);
+                    this.revealFailedWord();
                 }
                 // When every letter is correctly guessed
                 else if(RandomWords.locals.charsInWord === RandomWords.locals.properlyGuessedCharacterPerWord)
@@ -135,7 +126,21 @@ const ButtonsCanvas = {
     playAudio(fileName)
     {
         let correctAudio = new Audio('../sounds/' + fileName +'.wav');
+        correctAudio.autoplay = true;
+        correctAudio.muted = false;
         correctAudio.play();
+    },
+    revealFailedWord()
+    {
+        let wordHTML = document.querySelectorAll('.square.lousy');
+        wordHTML.forEach(article => {
+            article.textContent = article.classList[2];
+            article.classList.add('squareReveal');
+        });
+
+        this.playAudio('endgame');
+
+        this.resetHTMLRandomWord(5000);
     },
     resetHTMLRandomWord(duration)
     {
@@ -179,7 +184,8 @@ const RandomWords = {
         score: 0.0,
         pointsPerCorrectLetterGuessed: 0.5,
         properlyGuessedCharacterPerWord: 0,
-        wordsPassed: 0
+        wordsPassed: 0,
+        timer: 0.1 * 60
     },
 
     generateAndRenderSampleWord()
@@ -213,14 +219,43 @@ const RandomWords = {
         document.querySelector('.container > .sectionParagraph').appendChild(choosenWordParagraph);
 
         // Add the words and score section
-        let scoreBoard = document.createElement("section");
-        scoreBoard.classList.add("scoreBoard");
         let paragraph = document.createElement("p");
-        scoreBoard.appendChild(paragraph);
-       
-        document.querySelector('.container').appendChild(scoreBoard);
+        paragraph.classList.add('board');
+
+        //document.querySelector('.container > .scoreBoard').removeChild(paragraph);
+        document.querySelector('.container > .scoreBoard').appendChild(paragraph);
 
         this.updateWordsAndScore();
+
+        /*
+        let timerBoard = document.createElement("section");
+        timerBoard.classList.add("timer");
+        paragraph = document.createElement("p");
+        timerBoard.appendChild(paragraph);
+
+        document.querySelector('.container').appendChild(timerBoard);
+
+        var timerInterval = setInterval(function(){
+            const minutes = Math.floor(RandomWords.locals.timer / 60);
+
+            let seconds = RandomWords.locals.timer % 60;
+
+            console.log(minutes + ":" + seconds);
+        
+            RandomWords.locals.timer--;
+
+            if(RandomWords.locals.timer === 0)
+            {
+                clearInterval(timerInterval);
+                RandomWords.locals.timer = 0.1;
+                ButtonsCanvas.revealFailedWord();
+
+                return
+            }
+
+            document.querySelector('.timer p').textContent = 'You MUST answer in - ' + minutes + ":" + seconds;
+        }, 1000);
+        */
     },
     updateImageOnFailedAttempt(imageNumber)
     {

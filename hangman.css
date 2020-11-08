@@ -23,7 +23,7 @@ h1 {
 .container {
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 90px auto 100px 50px;
+    grid-template-rows: 90px auto 50px 50px 50px;
     grid-column-gap: 0px;
     grid-row-gap: 15px;
     align-items: center;
@@ -31,12 +31,17 @@ h1 {
     margin: 0;
 }
 
-.scoreBoard p{
+.scoreBoard p, .timer p{
     justify-content: center;
     text-align: center;
 }
 
- .placeHolderChoosen {
+.timer p{
+    color : red;
+    font-weight: bolder;
+}
+
+.placeHolderChoosen {
     display: flex;
     margin-top:20px;
     justify-content: center;
