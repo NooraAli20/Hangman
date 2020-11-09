@@ -73,33 +73,46 @@ const ButtonsCanvas = {
                         buttonElement.style.color = 'red';
                         buttonElement.disabled = true;
 
+                        /* disable that button as used */
                         ButtonsCanvas.elements.buttonsDisabled.push(buttonElement);
 
+                        // increment the score for guessing the right word
                         RandomWords.locals.score += RandomWords.locals.pointsPerCorrectLetterGuessed;
 
+                        // Increment with one, the number of guessed right letter. This number is later on compared with 
+                        // RandomWords.locals.charInWord to see if they match
                         RandomWords.locals.properlyGuessedCharacterPerWord++;
 
+                        // Then update the score board 
                         RandomWords.updateWordsAndScore();
                     });
 
+                    // play the correct audio for guessing right
                     ButtonsCanvas.playAudio('correct');
                 }
                 
-                if(RandomWords.locals.imageOnDisplay < 5 && typeof elements[0] === 'undefined')
+                // If the image to display is still equal or less than 5, and we didn't get any .square class picked from the DOM,
+                if(RandomWords.locals.imageOnDisplay <= 5 && typeof elements[0] === 'undefined')
                 {
+                    // Then change the style of that button to indicate false selection
                     buttonElement.style.color = 'rgba(210, 136, 136, 0.5)';
                     buttonElement.style.background = 'rgba(235, 234, 233, 0.9)';
                     buttonElement.title = 'Letter disabled. Already used';
                     buttonElement.disabled = true;
+
+                    // Update the image on this failed attempt
                     RandomWords.updateImageOnFailedAttempt(RandomWords.locals.imageOnDisplay);
                     RandomWords.locals.imageOnDisplay++;
 
+                    // Add this button to a list of already used buttons
                     ButtonsCanvas.elements.buttonsDisabled.push(buttonElement);
 
+                    // play the wrong button clicked wav fil
                     ButtonsCanvas.playAudio('wrong');
                 }
-                else if(RandomWords.locals.imageOnDisplay == 5)
+                else if(RandomWords.locals.imageOnDisplay > 5)
                 {
+                    // If we dont have any images left to display, then just reveal the word to the player
                     this.revealFailedWord();
                 }
                 // When every letter is correctly guessed
@@ -162,13 +175,20 @@ const ButtonsCanvas = {
             document.querySelector('#suicideImage').setAttribute('src', ' ');
 
             // Enable all disabled keyboard keys 
+            this.enableDisabledButtons();
+            
+        }, duration);
+    },
+    enableDisabledButtons()
+    {
+        if(ButtonsCanvas.elements.buttonsDisabled.length > 0)
+        {
             ButtonsCanvas.elements.buttonsDisabled.forEach(button => {
                 button.disabled = false;
                 button.style.color = 'black';
                 button.style.background = 'rgba(255, 255, 255, 0.6)';
             });
-            
-        }, duration);
+        }
     }
 };
 
@@ -185,7 +205,8 @@ const RandomWords = {
         pointsPerCorrectLetterGuessed: 0.5,
         properlyGuessedCharacterPerWord: 0,
         wordsPassed: 0,
-        timer: 0.1 * 60
+        timer: 60,
+        timerController: 0
     },
 
     generateAndRenderSampleWord()
@@ -195,6 +216,12 @@ const RandomWords = {
         var randomWordChoosen = arrayOfWords[Math.floor(Math.random() * arrayOfWords.length)];
 
         console.log(randomWordChoosen);
+
+        document.querySelector('#suicideImage').setAttribute('src', '');
+        ButtonsCanvas.enableDisabledButtons();
+
+        // if there exists reference to earlier words, remove them to prepare for next word
+        document.querySelectorAll('.container > .sectionParagraph > .placeHolderChoosen').forEach(el => el.remove());
 
         let choosenWordParagraph = document.createElement("p")
         choosenWordParagraph.classList.add("placeHolderChoosen");
@@ -227,35 +254,20 @@ const RandomWords = {
 
         this.updateWordsAndScore();
 
-        /*
-        let timerBoard = document.createElement("section");
-        timerBoard.classList.add("timer");
-        paragraph = document.createElement("p");
-        timerBoard.appendChild(paragraph);
+        this.locals.timerController = this.locals.timer;
 
-        document.querySelector('.container').appendChild(timerBoard);
+        var timerInterval = setInterval(() => {
 
-        var timerInterval = setInterval(function(){
-            const minutes = Math.floor(RandomWords.locals.timer / 60);
+            document.querySelector('.timer p').textContent = 'You MUST answer in ' +  this.locals.timerController + ' second(s)';
 
-            let seconds = RandomWords.locals.timer % 60;
-
-            console.log(minutes + ":" + seconds);
-        
-            RandomWords.locals.timer--;
-
-            if(RandomWords.locals.timer === 0)
+            if(this.locals.timerController <= 0)
             {
                 clearInterval(timerInterval);
-                RandomWords.locals.timer = 0.1;
-                ButtonsCanvas.revealFailedWord();
-
-                return
+                RandomWords.generateAndRenderSampleWord();
             }
-
-            document.querySelector('.timer p').textContent = 'You MUST answer in - ' + minutes + ":" + seconds;
+                
+            this.locals.timerController--;
         }, 1000);
-        */
     },
     updateImageOnFailedAttempt(imageNumber)
     {

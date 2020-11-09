@@ -1,5 +1,8 @@
 window.addEventListener("DOMContentLoaded", function () {
-   // Initialize the keyboard
+  
+  let timer = 2;
+  
+  // Initialize the keyboard
   ButtonsCanvas.init();
 
   RandomWords.generateAndRenderSampleWord();
