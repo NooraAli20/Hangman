@@ -92,7 +92,7 @@ const ButtonsCanvas = {
                 }
                 
                 // If the image to display is still equal or less than 5, and we didn't get any .square class picked from the DOM,
-                if(RandomWords.locals.imageOnDisplay <= 5 && typeof elements[0] === 'undefined')
+                else if(typeof elements[0] === 'undefined')
                 {
                     // Then change the style of that button to indicate false selection
                     buttonElement.style.color = 'rgba(210, 136, 136, 0.5)';
@@ -110,14 +110,19 @@ const ButtonsCanvas = {
                     // play the wrong button clicked wav fil
                     ButtonsCanvas.playAudio('wrong');
                 }
-                else if(RandomWords.locals.imageOnDisplay > 5)
+                
+                // IF the number of images to display exceeds 5, then 
+                // the user has failed way too many times.
+                if(RandomWords.locals.imageOnDisplay > 5)
                 {
                     // If we dont have any images left to display, then just reveal the word to the player
                     this.revealFailedWord();
                 }
+                
                 // When every letter is correctly guessed
-                else if(RandomWords.locals.charsInWord === RandomWords.locals.properlyGuessedCharacterPerWord)
+                if(RandomWords.locals.charsInWord === RandomWords.locals.properlyGuessedCharacterPerWord)
                 {
+                    // Download more audio on https://freesound.org/
                     this.playAudio('cheers');
                     RandomWords.locals.wordsPassed++;
                     RandomWords.updateWordsAndScore();
@@ -136,6 +141,7 @@ const ButtonsCanvas = {
 
         return fragment;
     },
+
     playAudio(fileName)
     {
         let correctAudio = new Audio('../sounds/' + fileName +'.wav');
@@ -143,8 +149,10 @@ const ButtonsCanvas = {
         correctAudio.muted = false;
         correctAudio.play();
     },
+
     revealFailedWord()
     {
+        RandomWords.locals.imageOnDisplay = 1;
         let wordHTML = document.querySelectorAll('.square.lousy');
         wordHTML.forEach(article => {
             article.textContent = article.classList[2];
@@ -155,6 +163,7 @@ const ButtonsCanvas = {
 
         this.resetHTMLRandomWord(5000);
     },
+
     resetHTMLRandomWord(duration)
     {
         setTimeout(function() {
@@ -175,10 +184,11 @@ const ButtonsCanvas = {
             document.querySelector('#suicideImage').setAttribute('src', ' ');
 
             // Enable all disabled keyboard keys 
-            this.enableDisabledButtons();
+            ButtonsCanvas.enableDisabledButtons();
             
         }, duration);
     },
+    
     enableDisabledButtons()
     {
         if(ButtonsCanvas.elements.buttonsDisabled.length > 0)
@@ -205,7 +215,8 @@ const RandomWords = {
         pointsPerCorrectLetterGuessed: 0.5,
         properlyGuessedCharacterPerWord: 0,
         wordsPassed: 0,
-        timer: 60,
+        // Time when word is available to be answered
+        timer: 180,
         timerController: 0
     },
 
@@ -222,6 +233,7 @@ const RandomWords = {
 
         // if there exists reference to earlier words, remove them to prepare for next word
         document.querySelectorAll('.container > .sectionParagraph > .placeHolderChoosen').forEach(el => el.remove());
+        document.querySelectorAll('.container > .scoreBoard > .board').forEach(el => el.remove());
 
         let choosenWordParagraph = document.createElement("p")
         choosenWordParagraph.classList.add("placeHolderChoosen");
@@ -267,7 +279,7 @@ const RandomWords = {
             }
                 
             this.locals.timerController--;
-        }, 1000);
+        }, 1000); // 1,000 milliseconds = 1 sekund
     },
     updateImageOnFailedAttempt(imageNumber)
     {
@@ -275,7 +287,7 @@ const RandomWords = {
     },
     updateWordsAndScore()
     {
-        let scoreBoardParagraph = document.querySelector('.scoreBoard p')
+        let scoreBoardParagraph = document.querySelector('.scoreBoard p');
         scoreBoardParagraph.textContent = "#Words : " + this.locals.wordsPassed + "/" +  this.locals.numberOfWordsAttempted + " - Score : " + this.locals.score; 
     }
 }
