@@ -23,7 +23,7 @@ h1 {
 .container {
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 90px auto 100px 50px;
+    grid-template-rows: 90px auto 50px 50px 50px;
     grid-column-gap: 0px;
     grid-row-gap: 15px;
     align-items: center;
@@ -31,7 +31,17 @@ h1 {
     margin: 0;
 }
 
- .placeHolderChoosen {
+.scoreBoard p, .timer p{
+    justify-content: center;
+    text-align: center;
+}
+
+.timer p{
+    color : red;
+    font-weight: bolder;
+}
+
+.placeHolderChoosen {
     display: flex;
     margin-top:20px;
     justify-content: center;
@@ -56,13 +66,12 @@ img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-  
-  }
+    border:0;
+}
 
 .square {
     height: 45px;
     width: 45px;
-    color:white;
     border-bottom-color: black;
     border-bottom-style: solid;
     padding-bottom:5px;
@@ -72,6 +81,20 @@ img {
     margin:5px;
     text-align: center;
 }
+
+.squareReveal {
+    animation:blinkingText 1.2s infinite;
+}
+
+@keyframes blinkingText{
+    0%{     color: rgba(255, 0, 0, 0.8);    }
+    49%{    color: rgba(255, 0, 0, 0.5);    }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: rgba(255, 0, 0, 0.8); ;    }
+}
+
+img{ border:0; }
 
 .keyboard {
     position: fixed;
@@ -95,6 +118,8 @@ img {
 
 .keyboard__key{
     height: 45px;
+    font-family: 'Syne Mono', monospace;
+    font-weight: bolder;
     /* The reason why the width is in percentage is that it allows it to be responsive */
     width: 6%;
     max-width: 50px;
